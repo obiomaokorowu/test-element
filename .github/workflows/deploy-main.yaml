@@ -41,6 +41,7 @@ jobs:
           cd ${{ github.workspace }}/python
           zip -r ../pandas_layer.zip .
           cd ..
+          ls -la ${{ github.workspace }}
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
