@@ -107,9 +107,9 @@ resource "aws_lambda_function" "merge_function" {
   timeout      = 900
   memory_size  = 512
   # Add the AWS Data Wrangler Layer
-  layers = [
-    "arn:aws:lambda:us-east-1:336392948345:layer:AWSDataWrangler-Python38:27"
-  ]
+#  layers = [
+#    "arn:aws:lambda:us-east-1:336392948345:layer:AWSDataWrangler-Python38:27"
+#  ]
 
   environment {
     variables = {
