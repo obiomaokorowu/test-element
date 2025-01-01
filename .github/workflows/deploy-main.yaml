@@ -30,11 +30,13 @@ jobs:
           RUN mkdir -p /lambda/python
           RUN pip install --upgrade pandas -t /lambda/python
           RUN pip install --upgrade numpy -t /lambda/python
+          CMD ["lambda_function.lambda_handler"]
           EOF
 
           # Prepare output directory and extract layer files
           mkdir -p ${{ github.workspace }}/python
           rm -rf ${{ github.workspace }}/python/*
+
           docker run --rm -v ${{ github.workspace }}/python:/outputs pandas-layer /bin/sh -c "cp -r /lambda/python/* /outputs"
 
           # Create the ZIP file for the Lambda layer
