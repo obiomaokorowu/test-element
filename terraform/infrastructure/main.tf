@@ -97,7 +97,7 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
 
 resource "aws_lambda_layer_version" "pandas_layer" {
   layer_name          = "pandas-layer"
-  compatible_runtimes = ["python3.8", "python3.9"]
+  compatible_runtimes = ["python3.8"]
   filename          = "${path.module}/pandas_layer.zip"
 }
 
