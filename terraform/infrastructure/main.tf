@@ -98,13 +98,15 @@ resource "null_resource" "build_pandas_layer" {
   provisioner "local-exec" {
     command = <<EOT
       # Build the Docker image
-      docker build -t pandas-layer - <<'DOCKERFILE'
+      cat <<EOF > Dockerfile
       FROM public.ecr.aws/lambda/python:3.8
       RUN yum install -y zip
       RUN mkdir -p /lambda/python
       RUN pip install pandas -t /lambda/python
       RUN pip install numpy -t /lambda/python
-      DOCKERFILE
+      EOF
+
+      docker build -t pandas-layer -f Dockerfile .
 
       # Extract the layer files to the host machine
       mkdir -p python
