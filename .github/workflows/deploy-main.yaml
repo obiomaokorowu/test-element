@@ -21,6 +21,33 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: aws sts get-caller-identity
 
+      - name: Install Docker
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y docker.io
+
+      - name: Build Docker Image and Extract Layer
+        run: |
+                # Create a directory for the Python dependencies
+            mkdir -p python
+                
+                # Build the Docker image
+            docker build -t pandas-layer - <<EOF
+            FROM public.ecr.aws/lambda/python:3.8
+            RUN yum install -y zip
+            RUN mkdir -p /lambda/python
+            RUN pip install pandas -t /lambda/python
+            RUN pip install numpy -t /lambda/python
+            EOF
+                
+                # Extract the layer files to the host machine
+            docker run --rm -v ${{ github.workspace }}/python:/outputs pandas-layer cp -r /lambda/python /outputs
+                
+                # Zip the extracted files
+            cd python
+            zip -r ../pandas_layer.zip .
+            cd ..
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
