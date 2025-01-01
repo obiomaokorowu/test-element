@@ -34,6 +34,7 @@ def lambda_handler(event, context):
         # Rename 'Homeless ID' column to 'HID' in anxiety dataset
         if 'Homeless ID' in df_anxiety.columns:
             df_anxiety.rename(columns={'Homeless ID': 'HID'}, inplace=True)
+            df_anxiety["HID"] = df_anxiety["HID"].apply(lambda x: f"{x[5:].zfill(3)}-15")
 
         # Standardize the HID columns in both datasets
         df_anxiety['HID'] = df_anxiety['HID'].apply(standardize_id)
