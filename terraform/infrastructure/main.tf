@@ -58,6 +58,12 @@ resource "aws_iam_role" "lambda_exec" {
   }
 }
 
+# Attach the basic Lambda execution policy
+resource "aws_iam_role_policy_attachment" "lambda_execution_policy" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 # IAM Policy for Lambda
 resource "aws_iam_role_policy" "lambda_exec_policy" {
   name   = "lambda-exec-policy"
@@ -98,6 +104,13 @@ resource "aws_lambda_function" "merge_function" {
 resource "aws_apigatewayv2_api" "http_api" {
   name          = var.api_gateway_name
   protocol_type = "HTTP"
+
+  cors_configuration {
+    allow_origins = ["*"]
+    allow_methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    allow_headers = ["*"]
+    max_age       = 3600
+  }
 }
 
 # API Gateway Lambda Integration
