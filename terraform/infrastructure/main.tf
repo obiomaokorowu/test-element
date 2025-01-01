@@ -78,8 +78,18 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
           "s3:PutObject"
         ],
         Resource = [
+          "arn:aws:s3:::austinobioma-datasets",
           "arn:aws:s3:::austinobioma-datasets/*"
         ]
+      },
+      {
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Effect   = "Allow",
+        Resource = "arn:aws:logs:*:*:*"
       }
     ]
   })
