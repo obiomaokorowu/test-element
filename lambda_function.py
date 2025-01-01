@@ -9,8 +9,8 @@ def lambda_handler(event, context):
     bucket_name = os.environ["S3_BUCKET_NAME"]
     try:
         # Fetch CSV files from S3
-        anxiety_obj = s3.get_object(Bucket=bucket_name, Key="raw/SF_HOMELESS_ANXIETY.csv")
-        demographics_obj = s3.get_object(Bucket=bucket_name, Key="raw/SF_HOMELESS_DEMOGRAPHICS.csv")
+        anxiety_obj = s3.get_object(Bucket=bucket_name, Key="SF_HOMELESS_ANXIETY.csv")
+        demographics_obj = s3.get_object(Bucket=bucket_name, Key="SF_HOMELESS_DEMOGRAPHICS.csv")
 
         # Load data into pandas DataFrames
         df_anxiety = pd.read_csv(io.BytesIO(anxiety_obj["Body"].read()))
