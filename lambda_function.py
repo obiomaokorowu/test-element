@@ -16,11 +16,15 @@ def lambda_handler(event, context):
         df_anxiety = pd.read_csv(io.BytesIO(anxiety_obj["Body"].read()))
         df_demographics = pd.read_csv(io.BytesIO(demographics_obj["Body"].read()))
 
-        # Check for HID column and handle missing cases
-        if "HID" not in df_anxiety.columns:
-            df_anxiety["HID"] = None  # Add an empty HID column if missing
-        if "HID" not in df_demographics.columns:
-            df_demographics["HID"] = None  # Add an empty HID column if missing
+        # Standardize column names
+        df_anxiety.rename(columns={"Homeless ID": "HID"}, inplace=True)
+        df_demographics.rename(columns={"HID": "HID"}, inplace=True)
+
+        # # Check for HID column and handle missing cases
+        # if "HID" not in df_anxiety.columns:
+        #     df_anxiety["HID"] = None  # Add an empty HID column if missing
+        # if "HID" not in df_demographics.columns:
+        #     df_demographics["HID"] = None  # Add an empty HID column if missing
 
         # Perform the merge operation
         merged_df = pd.merge(df_anxiety, df_demographics, on="HID", how="outer")
