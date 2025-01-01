@@ -7,6 +7,15 @@ s3 = boto3.client("s3")
 
 def lambda_handler(event, context):
     bucket_name = os.environ["S3_BUCKET_NAME"]
+
+    # Get the S3 object key from the event
+    for record in event['Records']:
+        key = record['s3']['object']['key']
+
+        # Ignore files in the processed/ folder
+        if key.startswith("processed/"):
+            print(f"Ignoring file in processed folder: {key}")
+            return {"statusCode": 200, "body": "File ignored."}
     try:
         # Fetch CSV files from S3
         anxiety_obj = s3.get_object(Bucket=bucket_name, Key="SF_HOMELESS_ANXIETY.csv")
@@ -20,11 +29,6 @@ def lambda_handler(event, context):
         df_anxiety.rename(columns={"Homeless ID": "HID"}, inplace=True)
         df_demographics.rename(columns={"HID": "HID"}, inplace=True)
 
-        # # Check for HID column and handle missing cases
-        # if "HID" not in df_anxiety.columns:
-        #     df_anxiety["HID"] = None  # Add an empty HID column if missing
-        # if "HID" not in df_demographics.columns:
-        #     df_demographics["HID"] = None  # Add an empty HID column if missing
 
         # Perform the merge operation
         merged_df = pd.merge(df_anxiety, df_demographics, on="HID", how="outer")
