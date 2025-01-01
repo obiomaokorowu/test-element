@@ -137,7 +137,7 @@ resource "aws_lambda_function" "merge_function" {
   handler          = "lambda_function.lambda_handler"
   runtime          = "python3.8"
   source_code_hash = filebase64sha256("lambda_function.zip")
-  timeout      = 3600
+  timeout      = 900
   memory_size  = 512
   layers = [aws_lambda_layer_version.pandas_layer.arn]
 
