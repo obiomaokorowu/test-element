@@ -28,9 +28,10 @@ jobs:
           FROM public.ecr.aws/lambda/python:3.8
           RUN yum install -y zip
           RUN mkdir -p /lambda/python
-          RUN pip install --upgrade pandas -t /lambda/python
-          RUN pip install --upgrade numpy -t /lambda/python
-          CMD ["lambda_function.lambda_handler"]
+          RUN pip install pandas numpy pytz python-dateutil six -t /lambda/python
+          RUN cd /lambda/python && \
+              zip -r /lambda/python/pandas_layer.zip pandas numpy pytz six.py dateutil
+          RUN chmod 777 /lambda/python/pandas_layer.zip
           EOF
 
           mkdir -p ${{ github.workspace }}/terraform/infrastructure/python
