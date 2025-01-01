@@ -33,15 +33,15 @@ jobs:
           CMD ["lambda_function.lambda_handler"]
           EOF
 
-          # Prepare output directory and extract layer files
-          mkdir -p ${{ github.workspace }}/python
-          rm -rf ${{ github.workspace }}/python/*
-          docker run --rm --entrypoint "" -v ${{ github.workspace }}/python:/outputs pandas-layer /bin/sh -c "cp -r /lambda/python/* /outputs"
+          mkdir -p ${{ github.workspace }}/terraform/infrastructure/python
+          rm -rf ${{ github.workspace }}/terraform/infrastructure/python/*
+          docker run --rm --entrypoint "" -v ${{ github.workspace }}/terraform/infrastructure/python:/outputs pandas-layer /bin/sh -c "cp -r /lambda/python/* /outputs"
+
           # Create the ZIP file for the Lambda layer
-          cd ${{ github.workspace }}/python
+          cd ${{ github.workspace }}/terraform/infrastructure/python
           zip -r ../pandas_layer.zip .
           cd ..
-          ls -la ${{ github.workspace }}
+          ls -la ${{ github.workspace }}/terraform/infrastructure
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
