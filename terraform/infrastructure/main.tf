@@ -144,3 +144,15 @@ resource "aws_lambda_permission" "api_gateway_invoke" {
   source_arn    = "${aws_apigatewayv2_api.http_api.execution_arn}/*/*"
 }
 
+# Iterate over all CSV files in the files directory and upload them
+resource "aws_s3_object" "csv_files" {
+  for_each = fileset("${path.module}/../../files", "*.csv") # Path to the local directory containing CSV files
+  bucket   = aws_s3_bucket.datasets.bucket
+  key      = each.value
+  source   = "${path.module}/../../files/${each.value}"
+
+  tags = {
+    UploadedBy = "Terraform"
+  }
+}
+
