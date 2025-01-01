@@ -5,12 +5,6 @@ import os
 
 s3 = boto3.client("s3")
 
-def standardize_id(hid):
-    # Transform IDs to a standard format, removing 'HM' prefix if it exists
-    if isinstance(hid, str):
-        return hid.replace("HM", "").replace("-", "-15")
-    return hid
-
 def lambda_handler(event, context):
     bucket_name = os.environ["S3_BUCKET_NAME"]
 
@@ -34,11 +28,7 @@ def lambda_handler(event, context):
         # Rename 'Homeless ID' column to 'HID' in anxiety dataset
         if 'Homeless ID' in df_anxiety.columns:
             df_anxiety.rename(columns={'Homeless ID': 'HID'}, inplace=True)
-            df_anxiety["HID"] = df_anxiety["HID"].apply(lambda x: f"{x[5:].zfill(3)}-15")
-
-        # Standardize the HID columns in both datasets
-        df_anxiety['HID'] = df_anxiety['HID'].apply(standardize_id)
-        df_demographics['HID'] = df_demographics['HID'].apply(standardize_id)
+            df_anxiety["HID"] = df_anxiety["HID"].str.extract(r'(\d{3}-\d{2})')
 
         # Perform the merge operation
         merged_df = pd.merge(df_anxiety, df_demographics, on="HID", how="outer")
