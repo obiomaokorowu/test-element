@@ -100,3 +100,34 @@ resource "aws_apigatewayv2_api" "http_api" {
   protocol_type = "HTTP"
 }
 
+# API Gateway Lambda Integration
+resource "aws_apigatewayv2_integration" "lambda_integration" {
+  api_id           = aws_apigatewayv2_api.http_api.id
+  integration_type = "AWS_PROXY"
+  integration_uri  = aws_lambda_function.merge_function.invoke_arn
+  payload_format_version = "2.0"
+}
+
+# API Gateway Route
+resource "aws_apigatewayv2_route" "http_route" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "GET /data"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+# API Gateway Deployment
+resource "aws_apigatewayv2_stage" "http_stage" {
+  api_id      = aws_apigatewayv2_api.http_api.id
+  name        = "default"
+  auto_deploy = true
+}
+
+# Lambda Permission to Allow API Gateway Invocation
+resource "aws_lambda_permission" "api_gateway_invoke" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.merge_function.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.http_api.execution_arn}/*/*"
+}
+
