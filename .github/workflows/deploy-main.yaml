@@ -36,9 +36,7 @@ jobs:
           # Prepare output directory and extract layer files
           mkdir -p ${{ github.workspace }}/python
           rm -rf ${{ github.workspace }}/python/*
-
-          docker run --rm -v ${{ github.workspace }}/python:/outputs pandas-layer /bin/sh -c "cp -r /lambda/python/* /outputs"
-
+          docker run --rm --entrypoint "" -v ${{ github.workspace }}/python:/outputs pandas-layer /bin/sh -c "cp -r /lambda/python/* /outputs"
           # Create the ZIP file for the Lambda layer
           cd ${{ github.workspace }}/python
           zip -r ../pandas_layer.zip .
