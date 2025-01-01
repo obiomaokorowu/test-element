@@ -24,17 +24,19 @@ jobs:
       - name: Build Docker Image and Extract Layer
         run: |
             mkdir -p python
-            docker build -t pandas-layer - <<EOF
+            docker build -t pandas-layer - <<DOCKERFILE
             FROM public.ecr.aws/lambda/python:3.8
             RUN yum install -y zip
             RUN mkdir -p /lambda/python
-            RUN pip install pandas -t /lambda/python
-            RUN pip install numpy -t /lambda/python
-            EOF
-            docker run --rm -v ${{ github.workspace }}/python:/outputs pandas-layer cp -r /lambda/python /outputs
-            cd python
-            zip -r ../pandas_layer.zip .
-            cd ..
+            RUN pip install --upgrade pandas -t /lambda/python
+            RUN pip install --upgrade numpy -t /lambda/python
+            DOCKERFILE
+          
+            mkdir -p ${{ github.workspace }}/python
+            rm -rf ${{ github.workspace }}/python/*
+           docker run --rm -v ${{ github.workspace }}/python:/outputs pandas-layer /bin/sh -c "cp -r /lambda/python/* /outputs"
+           cd ${{ github.workspace }}/python
+           zip -r ../pandas_layer.zip .
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
