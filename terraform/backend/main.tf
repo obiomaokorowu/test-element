@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "friday-ugbebor-backend-bkt"
+  bucket = "austinobioma-backend-bkt"
   acl    = "private"
 
   tags = {
@@ -12,7 +12,7 @@ resource "aws_s3_bucket" "terraform_state" {
 }
 
 resource "aws_dynamodb_table" "terraform_locks" {
-  name         = "friday-ugbebor-locks"
+  name         = "austin-locks"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
 

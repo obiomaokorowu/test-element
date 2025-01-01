@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "datasets_bucket_name" {
   description = "Name of the S3 bucket for datasets"
-  default     = "friday-ugbebor-datasets"
+  default     = "austinobioma-datasets"
 }
 
 variable "lambda_function_name" {

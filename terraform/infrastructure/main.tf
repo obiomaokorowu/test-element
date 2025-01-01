@@ -4,7 +4,7 @@ provider "aws" {
 
 # S3 Bucket for datasets
 resource "aws_s3_bucket" "datasets" {
-  bucket = "friday-ugbebor-datasets"
+  bucket = "austinobioma-datasets"
   acl    = "private"
 
   tags = {
@@ -62,7 +62,7 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
           "s3:PutObject"
         ],
         Resource = [
-          "arn:aws:s3:::friday-ugbebor-datasets/*"
+          "arn:aws:s3:::austinobioma-datasets/*"
         ]
       }
     ]
