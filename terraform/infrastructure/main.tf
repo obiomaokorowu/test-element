@@ -94,37 +94,6 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
     ]
   })
 }
-resource "null_resource" "build_pandas_layer" {
-  provisioner "local-exec" {
-    command = <<EOT
-      # Build the Docker image
-      cat <<EOF > Dockerfile
-      FROM public.ecr.aws/lambda/python:3.8
-      RUN yum install -y zip
-      RUN mkdir -p /lambda/python
-      RUN pip install pandas -t /lambda/python
-      RUN pip install numpy -t /lambda/python
-      EOF
-
-      docker build -t pandas-layer -f Dockerfile .
-
-      # Extract the layer files to the host machine
-      mkdir -p python
-      docker run --rm -v $(pwd)/python:/outputs pandas-layer cp -r /lambda/python /outputs
-
-      # Create the zip file
-      cd python
-      zip -r ../pandas_layer.zip .
-      cd ..
-       # Debugging: Verify the file exists
-      ls -l ../pandas_layer.zip
-    EOT
-  }
-
-  triggers = {
-    build_id = timestamp()
-  }
-}
 
 resource "aws_lambda_layer_version" "pandas_layer" {
   layer_name          = "pandas-layer"
