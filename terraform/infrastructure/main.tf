@@ -95,10 +95,38 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
   })
 }
 
+resource "null_resource" "build_pandas_layer" {
+  provisioner "local-exec" {
+    command = <<EOT
+      # Build the Docker image
+      docker build -t pandas-layer - <<EOF
+      FROM public.ecr.aws/lambda/python:3.8
+      RUN yum install -y zip
+      RUN mkdir -p /lambda/python
+      RUN pip install pandas -t /lambda/python
+      RUN pip install numpy -t /lambda/python
+      EOF
+
+      # Extract the layer files to the host machine
+      mkdir -p python
+      docker run --rm -v $(pwd)/python:/outputs pandas-layer cp -r /lambda/python /outputs
+
+      # Create the zip file
+      cd python
+      zip -r ../pandas_layer.zip .
+      cd ..
+    EOT
+  }
+
+  triggers = {
+    build_id = timestamp()
+  }
+}
+
 resource "aws_lambda_layer_version" "pandas_layer" {
   layer_name          = "pandas-layer"
   compatible_runtimes = ["python3.8", "python3.9"]
-  filename            = "pandas_layer.zip"
+  filename          = "${path.module}/pandas_layer.zip"
 
   source_code_hash = filebase64sha256("pandas_layer.zip")
 }
@@ -111,6 +139,8 @@ resource "aws_lambda_function" "merge_function" {
   handler          = "lambda_function.lambda_handler"
   runtime          = "python3.8"
   source_code_hash = filebase64sha256("lambda_function.zip")
+  timeout      = 3600
+  memory_size  = 512
   layers = [aws_lambda_layer_version.pandas_layer.arn]
 
   environment {
