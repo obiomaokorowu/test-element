@@ -2,6 +2,16 @@ provider "aws" {
   region = var.aws_region
 }
 
+# Create a remote backend for your terraform
+terraform {
+  backend "s3" {
+    bucket = "austinobioma-backend-bkt"
+    dynamodb_table = "austin-locks"
+    key    = "LockID"
+    region = "us-east-1"
+  }
+}
+
 # S3 Bucket for datasets
 resource "aws_s3_bucket" "datasets" {
   bucket = "austinobioma-datasets"
