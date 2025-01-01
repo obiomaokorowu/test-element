@@ -129,7 +129,7 @@ resource "null_resource" "build_pandas_layer" {
 resource "aws_lambda_layer_version" "pandas_layer" {
   layer_name          = "pandas-layer"
   compatible_runtimes = ["python3.8", "python3.9"]
-  filename          = "${path.module}/../pandas_layer.zip"
+  filename          = "${path.module}/pandas_layer.zip"
 }
 
 # Lambda Function
