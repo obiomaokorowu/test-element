@@ -95,6 +95,14 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
   })
 }
 
+resource "aws_lambda_layer_version" "pandas_layer" {
+  layer_name          = "pandas-layer"
+  compatible_runtimes = ["python3.8", "python3.9"]
+  filename            = "pandas_layer.zip"
+
+  source_code_hash = filebase64sha256("pandas_layer.zip")
+}
+
 # Lambda Function
 resource "aws_lambda_function" "merge_function" {
   filename         = "lambda_function.zip"
@@ -103,10 +111,11 @@ resource "aws_lambda_function" "merge_function" {
   handler          = "lambda_function.lambda_handler"
   runtime          = "python3.8"
   source_code_hash = filebase64sha256("lambda_function.zip")
+  layers = [aws_lambda_layer_version.pandas_layer.arn]
 
   environment {
     variables = {
-      S3_BUCKET = aws_s3_bucket.datasets.bucket
+      S3_BUCKET_NAME = aws_s3_bucket.datasets.bucket
     }
   }
 }
