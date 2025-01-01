@@ -94,18 +94,17 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
     ]
   })
 }
-
 resource "null_resource" "build_pandas_layer" {
   provisioner "local-exec" {
     command = <<EOT
       # Build the Docker image
-      docker build -t pandas-layer - <<EOF
+      docker build -t pandas-layer - <<'DOCKERFILE'
       FROM public.ecr.aws/lambda/python:3.8
       RUN yum install -y zip
       RUN mkdir -p /lambda/python
       RUN pip install pandas -t /lambda/python
       RUN pip install numpy -t /lambda/python
-      EOF
+      DOCKERFILE
 
       # Extract the layer files to the host machine
       mkdir -p python
