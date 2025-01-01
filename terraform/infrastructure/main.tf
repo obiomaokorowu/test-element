@@ -96,11 +96,6 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
   })
 }
 
-data "aws_lambda_layer_version" "aws_data_wrangler" {
-  layer_name    = "AWSSDKPandas-Python38"
-  version       = "27"
-}
-
 # Lambda Function
 resource "aws_lambda_function" "merge_function" {
   filename         = "lambda_function.zip"
@@ -113,7 +108,7 @@ resource "aws_lambda_function" "merge_function" {
   memory_size  = 512
   # Add the AWS Data Wrangler Layer
   layers = [
-    data.aws_lambda_layer_version.aws_data_wrangler.arn
+    "arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python38:27"
   ]
 
   environment {
