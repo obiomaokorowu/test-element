@@ -8,8 +8,8 @@ s3 = boto3.client("s3")
 def lambda_handler(event, context):
     bucket_name = os.environ["S3_BUCKET_NAME"]
     try:
-        anxiety_obj = s3.get_object(Bucket=bucket_name, Key="raw/SF_HOMELESS_ANXIETY.csv")
-        demographics_obj = s3.get_object(Bucket=bucket_name, Key="raw/SF_HOMELESS_DEMOGRAPHICS.csv")
+        anxiety_obj = s3.get_object(Bucket=bucket_name, Key="SF_HOMELESS_ANXIETY.csv")
+        demographics_obj = s3.get_object(Bucket=bucket_name, Key="SF_HOMELESS_DEMOGRAPHICS.csv")
 
         df_anxiety = pd.read_csv(io.BytesIO(anxiety_obj["Body"].read()))
         df_demographics = pd.read_csv(io.BytesIO(demographics_obj["Body"].read()))
