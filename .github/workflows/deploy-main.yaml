@@ -21,29 +21,6 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: aws sts get-caller-identity
 
-#      - name: Build Docker Image and Extract Layer
-#        run: |
-#          # Build the Docker image
-#          docker build -t pandas-layer - <<EOF
-#          FROM public.ecr.aws/lambda/python:3.8
-#          RUN yum install -y zip
-#          RUN mkdir -p /lambda/python
-#          RUN pip install pandas numpy pytz python-dateutil six -t /lambda/python
-#          RUN cd /lambda/python && \
-#              zip -r /lambda/python/pandas_layer.zip pandas numpy pytz six.py dateutil
-#          RUN chmod 777 /lambda/python/pandas_layer.zip
-#          EOF
-#
-#          mkdir -p ${{ github.workspace }}/terraform/infrastructure/python
-#          rm -rf ${{ github.workspace }}/terraform/infrastructure/python/*
-#          docker run --rm --entrypoint "" -v ${{ github.workspace }}/terraform/infrastructure/python:/outputs pandas-layer /bin/sh -c "cp -r /lambda/python/* /outputs"
-#
-#          # Create the ZIP file for the Lambda layer
-#          cd ${{ github.workspace }}/terraform/infrastructure/python
-#          zip -r ../pandas_layer.zip .
-#          cd ..
-#          ls -la ${{ github.workspace }}/terraform/infrastructure
-
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
