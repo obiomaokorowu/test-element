@@ -17,3 +17,7 @@ variable "lambda_execution_role_name" {
   description = "Name of the Lambda execution role"
   default     = "lambda-exec-role"
 }
+
+variable "api_gateway_name" {
+  default = "HomelessDataAPI"
+}

@@ -95,3 +95,8 @@ resource "aws_lambda_function" "merge_function" {
   }
 }
 
+resource "aws_apigatewayv2_api" "http_api" {
+  name          = var.api_gateway_name
+  protocol_type = "HTTP"
+}
+
