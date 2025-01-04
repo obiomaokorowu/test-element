@@ -206,9 +206,37 @@ resource "aws_iam_policy" "athena_access" {
   })
 }
 
-# Attach the policy to Lambda role
-resource "aws_iam_role_policy_attachment" "lambda_athena_access" {
-  role       = aws_iam_role.lambda_exec.name
+# IAM Role for Athena
+resource "aws_iam_role" "athena" {
+  name               = "athena-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect    = "Allow",
+        Principal = {
+          Service = "athena.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = {
+    Name = "Athena Role"
+  }
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [
+      tags
+    ]
+  }
+}
+
+# Attach the policy to Athena role
+resource "aws_iam_role_policy_attachment" "athena_access" {
+  role       = aws_iam_role.athena.name
   policy_arn = aws_iam_policy.athena_access.arn
 }
 # QuickSight Role
